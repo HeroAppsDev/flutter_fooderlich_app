@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/models/models.dart';
+import 'package:flutter_fooderlich_app/screens/screens.dart';
 
 class AppRouter extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+  @override
+  final GlobalKey<NavigatorState>
+      navigatorKey; //GlobalKey - a unique key across the entire app.
+
   late final AppStateManager appStateManager;
   late final GroceryManager groceryManager;
   late final ProfileManager profileManager;
@@ -21,11 +26,21 @@ class AppRouter extends RouterDelegate
   }
 
   @override
+  void dispose() {
+    appStateManager.removeListener(notifyListeners);
+    groceryManager.removeListener(notifyListeners);
+    profileManager.removeListener(notifyListeners);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    throw Navigator(
+    return Navigator(
       key: navigatorKey,
       onPopPage: _handlePopPage,
-      pages: [],
+      pages: [
+        if (!appStateManager.isInitialized) SplashScreen.page(),
+      ],
     );
   }
 
@@ -36,22 +51,9 @@ class AppRouter extends RouterDelegate
     return true;
   }
 
-  @override
-  final GlobalKey<NavigatorState>
-      navigatorKey; //GlobalKey - a unique key across the entire app.
-
   //Sets setNewRoutePath to null since you aren’t supporting Flutter web apps yet.
-
   @override
   Future<void> setNewRoutePath(configuration) async {
     return;
-  }
-
-  @override
-  void dispose() {
-    appStateManager.removeListener(notifyListeners);
-    groceryManager.removeListener(notifyListeners);
-    profileManager.removeListener(notifyListeners);
-    super.dispose();
   }
 }

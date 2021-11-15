@@ -14,7 +14,7 @@ class AppStateManager extends ChangeNotifier {
   bool _onboardingComplete = false;
   int _selectedTab = FooderlichTab.explore;
 
-  bool get initialized => _initialized;
+  bool get isInitialized => _initialized;
   bool get isLoggedIn => _loggedIn;
   bool get isOnboardingComplete => _onboardingComplete;
   int get getSelectedTab => _selectedTab;
