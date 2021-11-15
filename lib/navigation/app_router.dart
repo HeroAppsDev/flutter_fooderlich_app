@@ -9,11 +9,18 @@ class AppRouter extends RouterDelegate
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     throw Navigator(
       key: navigatorKey,
+      onPopPage: _handlePopPage,
       pages: [],
     );
+  }
+
+  bool _handlePopPage(Route<dynamic> route, result) {
+    if (!route.didPop(result)) {
+      return false;
+    }
+    return true;
   }
 
   @override
