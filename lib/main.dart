@@ -14,6 +14,7 @@ class FooderLichApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = FooderlichTheme.light();
+    final _appStateManager = AppStateManager();
     return MaterialApp(
       title: 'FooderLich',
       theme: theme,
@@ -25,6 +26,7 @@ class FooderLichApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (contex) => GroceryManager(),
           ),
+          ChangeNotifierProvider(create: (context) => _appStateManager),
         ],
         child: const Home(),
       ),
