@@ -22,7 +22,7 @@ class AppStateManager extends ChangeNotifier {
   void initializeApp() {
     //Sets a delayed timer for 2,000 milliseconds before executing the closure.
     //This sets how long the app screen will display after the user starts the app.
-    Timer(Duration(milliseconds: 2000), () {
+    Timer(const Duration(milliseconds: 2000), () {
       _initialized = true;
       notifyListeners();
     });

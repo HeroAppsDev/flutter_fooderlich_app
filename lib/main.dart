@@ -33,9 +33,6 @@ class _FooderLichAppState extends State<FooderLichApp> {
 
   @override
   Widget build(BuildContext context) {
-    final _appStateManager = AppStateManager();
-    final _profileManager = ProfileManager();
-    final _groceryManager = GroceryManager();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
