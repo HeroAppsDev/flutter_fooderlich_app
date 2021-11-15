@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fooderlich_app/circle_image.dart';
 import 'package:flutter_fooderlich_app/fooferlich_theme.dart';
+
+import 'components.dart';
 
 class AuthorCard extends StatefulWidget {
   const AuthorCard({

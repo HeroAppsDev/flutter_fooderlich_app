@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/fooferlich_theme.dart';
+import 'package:flutter_fooderlich_app/models/models.dart';
 
 class Card1 extends StatelessWidget {
-  const Card1({Key? key}) : super(key: key);
-//category, title, description, chef
-  final String category = "Editor's Choice";
-  final String title = 'The Art of Dough';
-  final String description = 'Learn to make the perfect bread.';
-  final String chef = 'Ray Wenderlich';
+  final ExploreRecipe recipe;
+  const Card1({Key? key, required this.recipe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,31 +15,31 @@ class Card1 extends StatelessWidget {
           width: 350,
           height: 450,
         ),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/mag1.png'),
+            image: AssetImage(recipe.backgroundImage),
             fit: BoxFit.cover,
           ),
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(10.0),
           ),
         ),
         child: Stack(
           children: [
             Text(
-              category,
+              recipe.subtitle,
               style: FooderlichTheme.darkTextTheme.bodyText1,
             ),
             Positioned(
               child: Text(
-                title,
+                recipe.title,
                 style: FooderlichTheme.darkTextTheme.headline6,
               ),
               top: 20,
             ),
             Positioned(
               child: Text(
-                description,
+                recipe.message,
                 style: FooderlichTheme.darkTextTheme.bodyText1,
               ),
               bottom: 30,
@@ -50,7 +47,7 @@ class Card1 extends StatelessWidget {
             ),
             Positioned(
               child: Text(
-                chef,
+                recipe.authorName,
                 style: FooderlichTheme.darkTextTheme.bodyText1,
               ),
               bottom: 10,

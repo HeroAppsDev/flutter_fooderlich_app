@@ -1,60 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fooderlich_app/card2.dart';
-import 'package:flutter_fooderlich_app/card3.dart';
+import 'package:flutter_fooderlich_app/models/models.dart';
+import 'package:flutter_fooderlich_app/screens/explore_screen.dart';
+import 'package:flutter_fooderlich_app/screens/grocery_screen.dart';
+import 'package:flutter_fooderlich_app/screens/recipes_screen.dart';
+import 'package:provider/provider.dart';
 
-import 'card1.dart';
-
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
-
   static List<Widget> pages = [
-    const Card1(),
-    const Card2(),
-    const Card3(),
+    ExploreScreen(),
+    RecipesScreen(),
+    const GroceryScreen(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'FooderLich',
-          style: Theme.of(context).textTheme.headline6,
+    return Consumer<TabManager>(builder: (context, tabManager, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'FooderLich',
+            style: Theme.of(context).textTheme.headline6,
+          ),
         ),
-      ),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Theme.of(context).textSelectionTheme.selectionColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card 2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card 3',
-          ),
-        ],
-      ),
-    );
+        body: IndexedStack( //preserves state of the scrollbar and screens
+          index: tabManager.selectedTab,
+          children: pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: tabManager.selectedTab,
+          onTap: (index) {
+            tabManager.goToTab(index);
+          },
+          selectedItemColor:
+              Theme.of(context).textSelectionTheme.selectionColor,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.explore),
+              label: 'Explore',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book),
+              label: 'Recipes',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'To Buy',
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
