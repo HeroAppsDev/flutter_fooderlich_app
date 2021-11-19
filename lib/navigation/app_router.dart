@@ -54,12 +54,15 @@ class AppRouter extends RouterDelegate
               onUpdate: (item, index) {}),
         if (groceryManager.selectedIndex != -1)
           GroceryItemScreen.page(
-              item: groceryManager.selectedGroceryItem,
-              index: groceryManager.selectedIndex,
-              onCreate: (_) {},
-              onUpdate: (item, index) {
-                groceryManager.updateItem(item, index);
-              })
+            item: groceryManager.selectedGroceryItem,
+            index: groceryManager.selectedIndex,
+            onCreate: (_) {},
+            onUpdate: (item, index) {
+              groceryManager.updateItem(item, index);
+            },
+          ),
+        if (profileManager.didSelectUser)
+          ProfileScreen.page(profileManager.getUser),
       ],
     );
   }
@@ -75,6 +78,10 @@ class AppRouter extends RouterDelegate
 
     if (route.settings.name == FooderlichPages.groceryItemDetails) {
       groceryManager.groceryItemTapped(-1);
+    }
+
+    if (route.settings.name == FooderlichPages.profilePath) {
+      profileManager.tapOnProfile(false);
     }
     return true;
   }
