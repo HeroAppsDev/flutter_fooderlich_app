@@ -39,11 +39,14 @@ class GroceryManager extends ChangeNotifier {
 
   void addItem(GroceryItem item) {
     _groceryItems.add(item);
+    _createNewItem = false;
     notifyListeners();
   }
 
   void updateItem(GroceryItem item, int index) {
     _groceryItems[index] = item;
+    _selectedIndex = -1;
+    _createNewItem = false;
     notifyListeners();
   }
 
