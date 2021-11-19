@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/models/models.dart';
 import 'package:flutter_fooderlich_app/screens/screens.dart';
+import 'package:flutter_fooderlich_app/screens/webview_screen.dart';
 
 class AppRouter extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
@@ -63,6 +64,7 @@ class AppRouter extends RouterDelegate
           ),
         if (profileManager.didSelectUser)
           ProfileScreen.page(profileManager.getUser),
+        if (profileManager.didTapOnRaywenderlich) WebViewScreen.page(),
       ],
     );
   }
@@ -82,6 +84,9 @@ class AppRouter extends RouterDelegate
 
     if (route.settings.name == FooderlichPages.profilePath) {
       profileManager.tapOnProfile(false);
+    }
+    if (route.settings.name == FooderlichPages.raywenderlich) {
+      profileManager.tapOnRaywenderlich(false);
     }
     return true;
   }
