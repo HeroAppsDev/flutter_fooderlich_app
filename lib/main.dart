@@ -54,7 +54,11 @@ class _FooderLichAppState extends State<FooderLichApp> {
           return MaterialApp(
             theme: theme,
             title: 'Fooderlich',
-            home: Router(routerDelegate: _appRouter),
+            home: Router(
+              routerDelegate: _appRouter,
+              backButtonDispatcher:
+                  RootBackButtonDispatcher(), //listens to the platform pop route notifications. When the user taps the Android system Back button, it triggers the router delegate’s onPopPage callback.
+            ),
           );
         },
       ),
