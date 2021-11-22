@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/fooferlich_theme.dart';
 import 'package:flutter_fooderlich_app/models/models.dart';
+import 'package:flutter_fooderlich_app/navigation/app_route_parser.dart';
 import 'package:flutter_fooderlich_app/navigation/app_router.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,8 @@ class _FooderLichAppState extends State<FooderLichApp> {
   final _profileManager = ProfileManager();
   final _appStateManager = AppStateManager();
   late AppRouter _appRouter;
+
+  final routeParser = AppRouteParser();
 
   @override
   void initState() {
@@ -56,8 +59,9 @@ class _FooderLichAppState extends State<FooderLichApp> {
             title: 'Fooderlich',
             home: Router(
               routerDelegate: _appRouter,
-              backButtonDispatcher:
-                  RootBackButtonDispatcher(), //listens to the platform pop route notifications. When the user taps the Android system Back button, it triggers the router delegate’s onPopPage callback.
+              //listens to the platform pop route notifications. When the user taps the Android system Back button, it triggers the router delegate’s onPopPage callback.
+              backButtonDispatcher: RootBackButtonDispatcher(),
+              routeInformationParser: routeParser,
             ),
           );
         },
