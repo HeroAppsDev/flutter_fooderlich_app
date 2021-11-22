@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/models/models.dart';
+import 'package:flutter_fooderlich_app/navigation/app_link.dart';
 import 'package:flutter_fooderlich_app/screens/screens.dart';
 import 'package:flutter_fooderlich_app/screens/webview_screen.dart';
 
-class AppRouter extends RouterDelegate
+class AppRouter extends RouterDelegate<AppLink>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   @override
   final GlobalKey<NavigatorState>
@@ -91,9 +92,38 @@ class AppRouter extends RouterDelegate
     return true;
   }
 
-  //Sets setNewRoutePath to null since you aren’t supporting Flutter web apps yet.
+  //You call setNewRoutePath() when a new route is pushed. It passes along an AppLink.
+  //This is your navigation configuration.
   @override
-  Future<void> setNewRoutePath(configuration) async {
-    return;
+  Future<void> setNewRoutePath(AppLink newLink) async {
+    //Use a switch to check every location.
+    switch (newLink.location) {
+      case AppLink
+          .kProfilePath: //If the new location is /profile, show the Profile screen.
+        profileManager.tapOnProfile(true);
+        break;
+      case AppLink.kItemPath: //Check if the new location starts with /item.
+        final itemId = newLink.itemId;
+        if (itemId != null) {
+          //If itemId is not null,
+          groceryManager.setSelectedGroceryItem(
+              itemId); //set the selected grocery item and show the Grocery Item screen.
+        } else {
+          groceryManager
+              .createNewItem(); //If itemId is null, show an empty Grocery Item screen.
+        }
+        profileManager.tapOnProfile(false); //Hide the Profile screen.
+        break;
+      case AppLink.kHomePath: //If the new location is /home.
+        appStateManager
+            .goToTab(newLink.currentTab ?? 0); //Set the currently selected tab.
+
+        //Make sure the Profile screen and Grocery Item screen are hidden.
+        profileManager.tapOnProfile(false);
+        groceryManager.groceryItemTapped(-1);
+        break;
+      default: //If the location does not exist, do nothing.
+        break;
+    }
   }
 }
