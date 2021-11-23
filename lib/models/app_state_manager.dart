@@ -41,7 +41,7 @@ class AppStateManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void completeOnboarding() async {
+  void onBoarded() async {
     _onboardingComplete = true;
     await _appCache.completeOnboarding();
     notifyListeners();

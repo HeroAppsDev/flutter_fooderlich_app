@@ -6,7 +6,6 @@ import 'package:flutter_fooderlich_app/screens/recipes_screen.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  final int currentTab;
   static MaterialPage page(int currentTab) {
     return MaterialPage(
       name: FooderlichPages.home,
@@ -21,6 +20,8 @@ class Home extends StatefulWidget {
     Key? key,
     required this.currentTab,
   }) : super(key: key);
+
+  final int currentTab;
 
   @override
   State<Home> createState() => _HomeState();

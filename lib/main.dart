@@ -6,23 +6,22 @@ import 'package:flutter_fooderlich_app/navigation/app_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const FooderLichApp());
+  runApp(const Fooderlich());
 }
 
-class FooderLichApp extends StatefulWidget {
-  const FooderLichApp({Key? key}) : super(key: key);
+class Fooderlich extends StatefulWidget {
+  const Fooderlich({Key? key}) : super(key: key);
 
   @override
-  State<FooderLichApp> createState() => _FooderLichAppState();
+  _FooderlichState createState() => _FooderlichState();
 }
 
-class _FooderLichAppState extends State<FooderLichApp> {
+class _FooderlichState extends State<Fooderlich> {
   final _groceryManager = GroceryManager();
   final _profileManager = ProfileManager();
   final _appStateManager = AppStateManager();
-  late AppRouter _appRouter;
-
   final routeParser = AppRouteParser();
+  late AppRouter _appRouter;
 
   @override
   void initState() {
@@ -38,12 +37,8 @@ class _FooderLichAppState extends State<FooderLichApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => _profileManager,
-        ),
-        ChangeNotifierProvider(
-          create: (contex) => _groceryManager,
-        ),
+        ChangeNotifierProvider(create: (context) => _profileManager),
+        ChangeNotifierProvider(create: (contex) => _groceryManager),
         ChangeNotifierProvider(create: (context) => _appStateManager),
       ],
       child: Consumer<ProfileManager>(
@@ -54,15 +49,13 @@ class _FooderLichAppState extends State<FooderLichApp> {
           } else {
             theme = FooderlichTheme.light();
           }
-          return MaterialApp(
+          return MaterialApp.router(
             theme: theme,
             title: 'Fooderlich',
-            home: Router(
-              routerDelegate: _appRouter,
-              //listens to the platform pop route notifications. When the user taps the Android system Back button, it triggers the router delegate’s onPopPage callback.
-              backButtonDispatcher: RootBackButtonDispatcher(),
-              routeInformationParser: routeParser,
-            ),
+            //listens to the platform pop route notifications. When the user taps the Android system Back button, it triggers the router delegate’s onPopPage callback.
+            backButtonDispatcher: RootBackButtonDispatcher(),
+            routeInformationParser: routeParser,
+            routerDelegate: _appRouter,
           );
         },
       ),

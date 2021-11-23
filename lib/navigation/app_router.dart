@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fooderlich_app/models/models.dart';
 import 'package:flutter_fooderlich_app/navigation/app_link.dart';
 import 'package:flutter_fooderlich_app/screens/screens.dart';
-import 'package:flutter_fooderlich_app/screens/webview_screen.dart';
 
 class AppRouter extends RouterDelegate<AppLink>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
@@ -10,9 +9,9 @@ class AppRouter extends RouterDelegate<AppLink>
   final GlobalKey<NavigatorState>
       navigatorKey; //GlobalKey - a unique key across the entire app.
 
-  late final AppStateManager appStateManager;
-  late final GroceryManager groceryManager;
-  late final ProfileManager profileManager;
+  final AppStateManager appStateManager;
+  final GroceryManager groceryManager;
+  final ProfileManager profileManager;
 
   AppRouter({
     required this.appStateManager,
@@ -41,31 +40,33 @@ class AppRouter extends RouterDelegate<AppLink>
       key: navigatorKey,
       onPopPage: _handlePopPage,
       pages: [
-        if (!appStateManager.isInitialized) SplashScreen.page(),
-        if (appStateManager.isInitialized && !appStateManager.isLoggedIn)
+        if (!appStateManager.isInitialized) ...[
+          SplashScreen.page(),
+        ] else if (!appStateManager.isLoggedIn) ...[
           LoginScreen.page(),
-        if (appStateManager.isLoggedIn && !appStateManager.isOnboardingComplete)
+        ] else if (!appStateManager.isOnboardingComplete) ...[
           OnboardingScreen.page(),
-        if (appStateManager.isOnboardingComplete)
+        ] else ...[
           Home.page(appStateManager.getSelectedTab),
-        if (groceryManager.isCreatingNewItem)
-          GroceryItemScreen.page(
-              onCreate: (item) {
-                groceryManager.addItem(item);
+          if (groceryManager.isCreatingNewItem)
+            GroceryItemScreen.page(
+                onCreate: (item) {
+                  groceryManager.addItem(item);
+                },
+                onUpdate: (item, index) {}),
+          if (groceryManager.selectedIndex != -1)
+            GroceryItemScreen.page(
+              item: groceryManager.selectedGroceryItem,
+              index: groceryManager.selectedIndex,
+              onCreate: (_) {},
+              onUpdate: (item, index) {
+                groceryManager.updateItem(item, index);
               },
-              onUpdate: (item, index) {}),
-        if (groceryManager.selectedIndex != -1)
-          GroceryItemScreen.page(
-            item: groceryManager.selectedGroceryItem,
-            index: groceryManager.selectedIndex,
-            onCreate: (_) {},
-            onUpdate: (item, index) {
-              groceryManager.updateItem(item, index);
-            },
-          ),
-        if (profileManager.didSelectUser)
-          ProfileScreen.page(profileManager.getUser),
-        if (profileManager.didTapOnRaywenderlich) WebViewScreen.page(),
+            ),
+          if (profileManager.didSelectUser)
+            ProfileScreen.page(profileManager.getUser),
+          if (profileManager.didTapOnRaywenderlich) WebViewScreen.page(),
+        ]
       ],
     );
   }
@@ -92,18 +93,46 @@ class AppRouter extends RouterDelegate<AppLink>
     return true;
   }
 
+  @override
+  AppLink get currentConfiguration => getCurrentPath();
+
+  AppLink getCurrentPath() {
+    if (!appStateManager.isLoggedIn) {
+      //If the user hasn’t logged in, return the app link with the login path.
+      return AppLink(location: AppLink.kLoginPath);
+    } else if (!appStateManager.isOnboardingComplete) {
+      //If the user hasn’t completed onboarding, return the app link with the onboarding path.
+      return AppLink(location: AppLink.kOnboardingPath);
+    } else if (profileManager.didSelectUser) {
+      //If the user taps the profile, return the app link with the profile path.
+      return AppLink(location: AppLink.kProfilePath);
+    } else if (groceryManager.isCreatingNewItem) {
+      //If the user taps the + button to create a new grocery item, return the app link with the item path.
+      return AppLink(location: AppLink.kItemPath);
+    } else if (groceryManager.selectedGroceryItem != null) {
+      //If the user selected an existing item, return an app link with the item path and the item’s id.
+      final id = groceryManager.selectedGroceryItem?.id;
+      return AppLink(location: AppLink.kItemPath, itemId: id);
+    } else {
+      //If none of the conditions are met, default by returning to the home path with the selected tab.
+      return AppLink(
+          location: AppLink.kHomePath,
+          currentTab: appStateManager.getSelectedTab);
+    }
+  }
+
   //You call setNewRoutePath() when a new route is pushed. It passes along an AppLink.
   //This is your navigation configuration.
   @override
-  Future<void> setNewRoutePath(AppLink newLink) async {
+  Future<void> setNewRoutePath(AppLink configuration) async {
     //Use a switch to check every location.
-    switch (newLink.location) {
+    switch (configuration.location) {
       case AppLink
           .kProfilePath: //If the new location is /profile, show the Profile screen.
         profileManager.tapOnProfile(true);
         break;
       case AppLink.kItemPath: //Check if the new location starts with /item.
-        final itemId = newLink.itemId;
+        final itemId = configuration.itemId;
         if (itemId != null) {
           //If itemId is not null,
           groceryManager.setSelectedGroceryItem(
@@ -115,8 +144,8 @@ class AppRouter extends RouterDelegate<AppLink>
         profileManager.tapOnProfile(false); //Hide the Profile screen.
         break;
       case AppLink.kHomePath: //If the new location is /home.
-        appStateManager
-            .goToTab(newLink.currentTab ?? 0); //Set the currently selected tab.
+        appStateManager.goToTab(
+            configuration.currentTab ?? 0); //Set the currently selected tab.
 
         //Make sure the Profile screen and Grocery Item screen are hidden.
         profileManager.tapOnProfile(false);

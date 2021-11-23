@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fooderlich_app/navigation/app_link.dart';
+import 'app_link.dart';
 
 //AppRouteParser extends RouteInformationParser. Notice it takes a generic type.
 //In this case, your type is AppLink, which holds all the route and navigation information.
@@ -16,9 +16,8 @@ class AppRouteParser extends RouteInformationParser<AppLink> {
 
   //This function passes in an AppLink object. You ask AppLink to give you back the URL string.
   @override
-  RouteInformation? restoreRouteInformation(AppLink appLink) {
+  RouteInformation restoreRouteInformation(AppLink appLink) {
     final location = appLink.toLocation();
-
     //You wrap it in RouteInformation to pass it along.
     return RouteInformation(location: location);
   }

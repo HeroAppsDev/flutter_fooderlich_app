@@ -1,4 +1,4 @@
-import 'package:url_launcher/link.dart';
+import 'package:flutter/material.dart';
 
 class AppLink {
   //URL paths
@@ -41,18 +41,27 @@ class AppLink {
     final itemId = params[AppLink.kIdParam];
 
     //Create the AppLink by passing in the query parameters you extract from the URL string.
-    final link =
-        AppLink(location: uri.path, currentTab: currentTab, itemId: itemId);
+    final link = AppLink(
+      location: uri.path,
+      currentTab: currentTab,
+      itemId: itemId,
+    );
 
     //Return the instance of AppLink.
+
+    debugPrint('## ${link.toString()}');
     return link;
   }
 
   String toLocation() {
     //Create an internal function that formats the query parameter key-value pair into a string format.
-    String addKeyValPair({required String key, String? value}) =>
+    String addKeyValPair({
+      required String key,
+      String? value,
+    }) =>
         value == null ? '' : '$key=$value&';
 
+    debugPrint('## $location');
     //Go through each defined path.
     switch (location) {
       case kLoginPath: //If the path is kLoginPath, return the right string path: /login.
@@ -64,15 +73,16 @@ class AppLink {
       case kItemPath: //If the path is kItemPath, return the right string path: /item
         var loc = '$kItemPath?';
         loc += addKeyValPair(
-            key: kIdParam,
-            value: itemId); //and if there are any parameters, append ?id=${id}.
+          key: kIdParam,
+          value: itemId,
+        ); //and if there are any parameters, append ?id=${id}.
         return Uri.encodeFull(loc);
       default: //If the path is invalid,
         var loc = '$kHomePath?'; // default to the path /home.
         loc += addKeyValPair(
-            key: kTabParam,
-            value: currentTab
-                .toString()); //If the user selected a tab, append ?tab=${tabIndex}
+          key: kTabParam,
+          value: currentTab.toString(),
+        ); //If the user selected a tab, append ?tab=${tabIndex}
         return Uri.encodeFull(loc);
     }
   }
